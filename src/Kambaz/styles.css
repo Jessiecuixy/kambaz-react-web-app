@@ -28,9 +28,3 @@ body * {  font-family: Arial, Helvetica, sans-serif;  }
 .wd-lesson {
   border-left: 3px solid green !important;
 }
-
-.border-start-green {
-  --bs-border-opacity: 1;
-  border: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color) !important;
-  border-left: 4px solid green !important;
-}
