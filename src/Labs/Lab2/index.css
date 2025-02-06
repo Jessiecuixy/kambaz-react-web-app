@@ -149,6 +149,7 @@ p#wd-id-selector-2 {
 
 .wd-float-left {
 	float: left;
+	height: 100px;
 	}
 .wd-float-right {
 	float: right;

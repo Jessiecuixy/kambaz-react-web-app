@@ -5,7 +5,7 @@ export default function Float() {
 		<div id="wd-float-divs">
 			<h2>Float</h2>
 			<div>
-				{/* <img className="wd-float-right"
+				<img className="wd-float-right"
 					src="https://www.staradvertiser.com/wp-content/uploads/2021/08/web1_Starship-gap2.jpg"/>
 				Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has 
 				been the industry's standard dummy text ever since the 1500s, when an unknown printer took 
@@ -44,7 +44,9 @@ export default function Float() {
 				on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of 
 				model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem 
 				Ipsum is therefore always free from repetition, injected humour, or non-characteristic words 
-				etc. */}
+				etc.
+			</div>
+			<div>
 				<div className="wd-float-left wd-dimension-portrait wd-bg-color-yellow">
 					Yellow </div>
 				<div className="wd-float-left wd-dimension-portrait wd-bg-color-blue wd-fg-color-white">
