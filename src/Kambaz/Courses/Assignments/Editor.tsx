@@ -62,7 +62,7 @@ export default function AssignmentEditor() {
           </Col>
         </Row>
 
-        <Row className="mb-3 align-items-center">
+        <Row className="mb-3">
           <Col md={3} className="text-end">
             <Form.Label>Submission Type</Form.Label>
           </Col>
@@ -89,7 +89,7 @@ export default function AssignmentEditor() {
           </Col>
         </Row>
 
-        <Row className="mb-3 align-items-center">
+        <Row className="mb-3">
           <Col md={3} className="text-end">
             <Form.Label>Assign</Form.Label>
           </Col>
@@ -108,18 +108,18 @@ export default function AssignmentEditor() {
                 <Form.Control className="mb-4" id="wd-due-date" type="datetime-local" defaultValue="2024-05-13T23:59" />
 
                 <Row className="mb-2 align-items-center fw-bold">
-                  <Col md={4} >
+                  <Col md={6} >
                     <Form.Label>Available from</Form.Label>
                   </Col>
-                  <Col md={4}>
+                  <Col md={6}>
                   <Form.Label>Until</Form.Label>
                   </Col>
                 </Row>
                 <Row className="mb-2 align-items-center">
-                  <Col md={4}>
+                  <Col md={6}>
                     <Form.Control id="wd-available-from" type="datetime-local" defaultValue="2024-05-06T12:00" />
                   </Col>
-                  <Col md={4}>
+                  <Col md={6}>
                     <Form.Control id="wd-available-until" type="datetime-local" defaultValue="2024-05-20T12:00" />
                   </Col>
                 </Row>
