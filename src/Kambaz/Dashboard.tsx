@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Button, Card, Col, FormControl, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
@@ -25,7 +25,7 @@ import { enrollCourse, unenrollCourse } from "./Enrollments/reducer";
       _id: uuidv4(),
       name: "",
       description: "",
-      src: "/images/default-course.jpg",
+      src: "/images/reactjs.jpg",
     });
     const [showAllCourses, setShowAllCourses] = useState(false);
     const displayedCourses = showAllCourses

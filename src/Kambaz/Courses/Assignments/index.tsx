@@ -4,7 +4,7 @@ import { FaCheckCircle, FaPlus, FaTrash } from "react-icons/fa";
 import { LiaFileAltSolid, LiaPlusSolid, LiaSearchSolid } from "react-icons/lia";
 import { GoTriangleDown } from "react-icons/go";
 import { IoEllipsisVertical } from "react-icons/io5";
-import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { deleteAssignment } from "./reducer";
 
