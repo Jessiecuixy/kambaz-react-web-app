@@ -18,10 +18,10 @@ export default function Courses() {
     const enrollments = useSelector((state: any) => state.enrollmentReducer.enrollments);
     const { currentUser } = useSelector((state: any) => state.accountReducer);
     const isEnrolled = enrollments.some(
-      (enroll: any) => enroll.userId === currentUser._id && enroll.courseId === cid
+      (enroll: any) => enroll.user === currentUser._id && enroll.course === cid
   );
 
-  if (!isEnrolled) {
+  if (currentUser && currentUser.role === "STUDENT" && !isEnrolled) {
       return <Navigate to="/Kambaz/Dashboard" replace />;
   }
     return (

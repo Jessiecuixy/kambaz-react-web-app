@@ -28,55 +28,63 @@ import { enrollCourse, unenrollCourse } from "./Enrollments/reducer";
       src: "/images/reactjs.jpg",
     });
     const [showAllCourses, setShowAllCourses] = useState(false);
-    const displayedCourses = showAllCourses
-    ? courses
-    : courses.filter((courseItem: any) =>
-        enrollments.some(
-          (enroll: any) =>
-            enroll.userId === currentUser._id && enroll.courseId === courseItem._id
-        )
-      );
+    const displayedCourses = currentUser.role === "STUDENT" 
+      ? showAllCourses
+        ? courses
+        : courses.filter((courseItem: any) =>
+            enrollments.some(
+              (enroll: any) =>
+                enroll.user === currentUser._id && enroll.course === courseItem._id
+            )
+          )
+      : courses;
 
-    // console.log("courses:", courses);
   return (
     <div className="p-4" id="wd-dashboard">
       <h1 id="wd-dashboard-title">Dashboard</h1> <hr />
-      <Button
-        variant="info"
-        className="float-end mb-3"
-        onClick={() => setShowAllCourses(!showAllCourses)}
-      >
-        {showAllCourses ? "Enrollments" : "All Courses"}
-      </Button>
-      <h5>New Course
-          <button className="btn btn-primary float-end me-2"
-                  id="wd-add-new-course-click"
-                  onClick={() => {setSelectedCourse({
-                    _id: uuidv4(),
-                    name: "",
-                    description: "",
-                    src: "./images/reactjs.jpg",
-                  });
-            dispatch(addCourse(selectedCourse));}} > Add </button>
-          <button className="btn btn-warning float-end me-2"
-                  onClick={() => dispatch(updateCourse(selectedCourse))} id="wd-update-course-click">
-          Update
-        </button>
-      </h5><hr />
-      <br />
-      <FormControl value={selectedCourse.name} className="mb-2"
-              onChange={(e) => setSelectedCourse({ ...selectedCourse, name: e.target.value }) } />
-      <FormControl as="textarea" value={selectedCourse.description} rows={3}
-              onChange={(e) => setSelectedCourse({ ...selectedCourse, description: e.target.value }) } />
+      {currentUser && currentUser.role === "STUDENT" && (
+        <Button
+          variant="info"
+          className="float-end mb-3"
+          onClick={() => setShowAllCourses(!showAllCourses)}
+        >
+          {showAllCourses ? "Enrollments" : "All Courses"}
+        </Button>
+      )}
+      {currentUser && currentUser.role === "FACULTY" && (
+        <div>
+          <h5>New Course
+              <button className="btn btn-primary float-end me-2"
+                      id="wd-add-new-course-click"
+                      onClick={() => {setSelectedCourse({
+                        _id: uuidv4(),
+                        name: "",
+                        description: "",
+                        src: "./images/reactjs.jpg",
+                      });
+                dispatch(addCourse(selectedCourse));}} > Add </button>
+              <button className="btn btn-warning float-end me-2"
+                      onClick={() => dispatch(updateCourse(selectedCourse))} id="wd-update-course-click">
+              Update
+            </button>
+          </h5>
+          <hr />
+          <br />
+            <FormControl value={selectedCourse.name} className="mb-2" placeholder="New Course"
+                    onChange={(e) => setSelectedCourse({ ...selectedCourse, name: e.target.value }) } />
+            <FormControl as="textarea" value={selectedCourse.description} rows={3} placeholder="New Description"
+                    onChange={(e) => setSelectedCourse({ ...selectedCourse, description: e.target.value }) } />
+        </div>
+      )}
 
-      <h2 id="wd-dashboard-published">Published Courses ({courses.length})</h2> <hr />
+      <h2 id="wd-dashboard-published">Published Courses ({displayedCourses.length})</h2> <hr />
       <div className="row" id="wd-dashboard-courses">
         <Row xs={1} md={5} className="g-4">
         {displayedCourses.map((courseItem: any) => {
             const isEnrolled = enrollments.some(
               (enroll: any) =>
-                enroll.userId === currentUser._id &&
-                enroll.courseId === courseItem._id
+                enroll.user === currentUser._id &&
+                enroll.course === courseItem._id
             );
         
             return (
@@ -91,18 +99,26 @@ import { enrollCourse, unenrollCourse } from "./Enrollments/reducer";
                         <Card.Text className="wd-dashboard-course-description overflow-hidden" style={{ height: "100px" }}>
                           {courseItem.description} </Card.Text>
                         <Button variant="primary"> Go </Button>
-                        <Button onClick={(event) => {
-                          event.preventDefault();
-                          dispatch(deleteCourse(courseItem._id));
-                          }} className="btn btn-danger float-end"
-                          id="wd-delete-course-click">
-                          Delete</Button>
-                        <Button id="wd-edit-course-click"
-                          onClick={(event) => {
-                          event.preventDefault();
-                          setSelectedCourse(courseItem);}}
-                          className="btn btn-warning me-2 float-end" >
-                          Edit</Button>
+
+                        {currentUser && currentUser.role === "FACULTY" && (
+                          <Button onClick={(event) => {
+                            event.preventDefault();
+                            dispatch(deleteCourse(courseItem._id));
+                            }} className="btn btn-danger float-end"
+                            id="wd-delete-course-click">
+                            Delete
+                          </Button>
+                        )}
+                        {currentUser && currentUser.role === "FACULTY" && (
+                          <Button id="wd-edit-course-click"
+                            onClick={(event) => {
+                            event.preventDefault();
+                            setSelectedCourse(courseItem);}}
+                            className="btn btn-warning me-2 float-end" >
+                            Edit
+                          </Button>
+                        )}
+                        {currentUser && currentUser.role === "STUDENT" && (
                           <Button
                             variant={isEnrolled ? "danger" : "success"}
                             onClick={(event) => {
@@ -110,23 +126,24 @@ import { enrollCourse, unenrollCourse } from "./Enrollments/reducer";
                               if (isEnrolled) {
                                 dispatch(
                                   unenrollCourse({
-                                    userId: currentUser._id,
-                                    courseId: courseItem._id,
+                                    user: currentUser._id,
+                                    course: courseItem._id,
                                   })
                                 );
                               } else {
                                 dispatch(
                                   enrollCourse({
-                                    userId: currentUser._id,
-                                    courseId: courseItem._id,
+                                    user: currentUser._id,
+                                    course: courseItem._id,
                                   })
                                 );
                               }
                             }}
-                            className="float-end m-2"
+                            className="float-end"
                           >
                             {isEnrolled ? "Unenroll" : "Enroll"}
-                        </Button>
+                          </Button>
+                      )}
                       </Card.Body>
                     </Link>
                   </Card>
