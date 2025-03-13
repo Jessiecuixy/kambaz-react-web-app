@@ -4,6 +4,8 @@ import GreenCheckmark from "./GreenCheckmark";
 import { Button, Dropdown } from "react-bootstrap";
 import GreyCheckmark from "./GreyCheckmark";
 import { useState } from "react";
+import { useSelector } from "react-redux";
+
 export default function ModulesControls(
   { moduleName, setModuleName, addModule }:
   { moduleName: string; setModuleName: (title: string) => void; addModule: () => void; }
@@ -11,12 +13,16 @@ export default function ModulesControls(
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
+
  return (
    <div id="wd-modules-controls" className="text-nowrap mb-3" >
-     <Button variant="danger" onClick={handleShow} size="lg" className="me-1 float-end" id="wd-add-module-btn">
-       <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
-       Module
-     </Button>
+      {currentUser && currentUser.role === "FACULTY" && (
+        <Button variant="danger" onClick={handleShow} size="lg" className="me-1 float-end" id="wd-add-module-btn">
+          <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
+          Module
+        </Button>
+      )}
      <Dropdown className="float-end me-2">
        <Dropdown.Toggle variant="secondary" size="lg" id="wd-publish-all-btn">
          <GreenCheckmark /> Publish All

@@ -13,6 +13,7 @@ export default function Assignments(
 ) {
   const { cid } = useParams(); 
   const { assignments } = useSelector((state: any) => state.assignmentsReducer);
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
 
   const courseAssignments = assignments.filter((assignment: any) => assignment.course === cid); 
   const navigate = useNavigate()
@@ -32,6 +33,7 @@ export default function Assignments(
             className="form-control border-start-0"
           />
         </div>
+        {currentUser && currentUser.role === "FACULTY" && (
         <div>
           <Button variant="light" size="lg" className="me-2" id="wd-add-assignment-group">
             <LiaPlusSolid className="me-1" /> Group
@@ -39,8 +41,8 @@ export default function Assignments(
           <Button variant="danger" size="lg" id="wd-add-assignment" onClick={() => navigate(`/Kambaz/Courses/${cid}/Assignments/Editor`)}>
             <LiaPlusSolid className="me-1" /> Assignment
           </Button>
-          
         </div>
+        )}
       </div>
 
       <ListGroup id="wd-assignments" className="wd-lessons rounded-0">
@@ -57,16 +59,17 @@ export default function Assignments(
             <BsGripVertical className="me-3 text-secondary fs-4" />
             <LiaFileAltSolid className="me-4 text-success fs-4" />
             <div className="flex-grow-1">
-              <Link to={`/Kambaz/Courses/${cid}/Assignments/${assignment._id}`}
+              <div
                 className="fw-bold text-dark text-decoration-none fs-5">
                 {assignment.title}
-              </Link>
+                </div>
               <div className="text-muted small">
                 <span className="text-danger fw-bold">Multiple Modules</span> | <b>Not available until</b> {new Date(assignment.availabletime).toLocaleDateString("en-US", {month: "short", day: "numeric", hour: "numeric", minute: "2-digit", hour12: true}).replace(",", " at ")} |<br />
                 <b>Due</b> {new Date(assignment.duetime).toLocaleDateString("en-US", {month: "short", day: "numeric", hour: "numeric", minute: "2-digit", hour12: true}).replace(",", " at ")} | {assignment.awards} <span>pts</span>
               </div>
             </div>
             <FaCheckCircle className="text-success fs-4" />
+            {currentUser && currentUser.role === "FACULTY" && (
             <FaTrash className="text-danger fs-4 ms-3"
             style={{ cursor: "pointer" }}
             onClick={() => {
@@ -78,6 +81,7 @@ export default function Assignments(
                 dispatch(deleteAssignment(assignment._id));
               }
             }}/>
+            )}
             <IoEllipsisVertical className="text-secondary fs-4 ms-2" />
           </ListGroup.Item>
         ))}
