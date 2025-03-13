@@ -4,7 +4,7 @@ import { FaCheckCircle, FaPlus, FaTrash } from "react-icons/fa";
 import { LiaFileAltSolid, LiaPlusSolid, LiaSearchSolid } from "react-icons/lia";
 import { GoTriangleDown } from "react-icons/go";
 import { IoEllipsisVertical } from "react-icons/io5";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { deleteAssignment } from "./reducer";
 
@@ -59,10 +59,12 @@ export default function Assignments(
             <BsGripVertical className="me-3 text-secondary fs-4" />
             <LiaFileAltSolid className="me-4 text-success fs-4" />
             <div className="flex-grow-1">
-              <div
+              <Link to={currentUser && currentUser.role === "FACULTY" 
+                ? `/Kambaz/Courses/${cid}/Assignments/${assignment._id}`
+                : "#"}
                 className="fw-bold text-dark text-decoration-none fs-5">
                 {assignment.title}
-                </div>
+              </Link>
               <div className="text-muted small">
                 <span className="text-danger fw-bold">Multiple Modules</span> | <b>Not available until</b> {new Date(assignment.availabletime).toLocaleDateString("en-US", {month: "short", day: "numeric", hour: "numeric", minute: "2-digit", hour12: true}).replace(",", " at ")} |<br />
                 <b>Due</b> {new Date(assignment.duetime).toLocaleDateString("en-US", {month: "short", day: "numeric", hour: "numeric", minute: "2-digit", hour12: true}).replace(",", " at ")} | {assignment.awards} <span>pts</span>
