@@ -1,102 +1,108 @@
-import { Form, Card, Row, Col } from "react-bootstrap";
-import { useParams, Link } from "react-router-dom";
-import { assignments } from "../../Database";
+import React, { useState } from "react";
+import { Form, Card, Row, Col, Button } from "react-bootstrap";
+import { useParams, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { addAssignment, updateAssignment } from "./reducer";
+import { v4 as uuidv4 } from "uuid";
 
 export default function AssignmentEditor() {
   const { cid, aid } = useParams();
-  console.log(cid);
-  const assignment = assignments.find(a => a._id === aid && a.course === cid);
-  if (!assignment) {
-    return <div className="container mt-4 text-danger">Assignment not found.</div>;
+  const isEditMode = Boolean(aid);
+  const assignments = useSelector(
+    (state: any) => state.assignmentsReducer.assignments
+  );
+  const foundAssignment = isEditMode
+    ? assignments.find((a: any) => a._id === aid && a.course === cid)
+    : null;
+  if (isEditMode && !foundAssignment) {
+    return (
+      <div className="container mt-4 text-danger">
+        Assignment not found.
+      </div>
+    );
   }
+  const assignment = foundAssignment || {
+    title: "",
+    course: "",
+    description: "",
+    awards: "",
+    duetime: "",
+    availabletime: "",
+  };
+  const [title, setTitle] = useState(
+    isEditMode ? foundAssignment!.title : "New Assignment"
+  );
+  const [description, setDescription] = useState(
+    isEditMode ? foundAssignment!.description : "New Assignment Description"
+  );
+  const [points, setPoints] = useState(assignment.awards);
+  const [dueTime, setDueTime] = useState(assignment.duetime);
+  const [availableFrom, setAvailableFrom] = useState(assignment.availabletime);
+  const [availableUntil, setAvailableUntil] = useState(assignment.duetime);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleSave = () => {
+    // console.log("cid =", cid);
+    const newAssignment = {
+      _id: isEditMode ? foundAssignment!._id : uuidv4(),
+      course: cid,
+      title,
+      description,
+      awards: points,
+      duetime: dueTime,
+      availabletime: availableFrom,
+      availableUntil,
+    };
+
+    if (isEditMode) {
+      dispatch(updateAssignment(newAssignment));
+    } else {
+      dispatch(addAssignment(newAssignment));
+    }
+    navigate("/Kambaz/Courses/" + cid + "/Assignments");
+  };
+
+  const handleCancel = () => {
+    navigate("/Kambaz/Courses/" + cid + "/Assignments");
+  };
+
   return (
     <div className="container mt-4">
       <Form id="wd-assignments-editor">
         <Form.Group className="mb-3">
           <Form.Label className="fw-bold">Assignment Name</Form.Label>
-          <Form.Control id="wd-name" type="text" defaultValue={assignment.title} />
+          <Form.Control
+            id="wd-name"
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
         </Form.Group>
-
-        <Card className="mb-4">
-          <Card.Body>
-            <p>
-              The assignment is <span className="text-danger">available online</span>
-            </p>
-            <p>
-              Submit a link to the landing page of your Web application running
-              on Netlify.
-            </p>
-            <p>The landing page should include the following:</p>
-            <ul>
-              <li>Your full name and section</li>
-              <li>Links to each of the lab assignments</li>
-              <li>Link to the Kanbas application</li>
-              <li>Links to all relevant source code repositories</li>
-            </ul>
-            <p>
-              The Kanbas application should include a link to navigate back to the landing page.
-            </p>
-          </Card.Body>
-        </Card>
-
+        <Form.Group className="mb-3">
+          <Form.Label className="fw-bold">Description</Form.Label>
+          <Form.Control
+            id="wd-description"
+            as="textarea"
+            rows={3}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        </Form.Group>
         <Row className="mb-3 align-items-center">
           <Col md={3} className="text-end">
             <Form.Label>Points</Form.Label>
           </Col>
           <Col md={9}>
-            <Form.Control id="wd-points" type="number" defaultValue={assignment.awards} />
+            <Form.Control
+              id="wd-points"
+              type="number"
+              value={points}
+              onChange={(e) => setPoints(e.target.value)}
+            />
           </Col>
         </Row>
-
-        {/* <Row className="mb-3 align-items-center">
-          <Col md={3} className="text-end">
-            <Form.Label>Assignment Group</Form.Label>
-          </Col>
-          <Col md={9}>
-            <Form.Select id="wd-group">
-              <option value="assignments">ASSIGNMENTS</option>
-            </Form.Select>
-          </Col>
-        </Row> */}
-
-        {/* <Row className="mb-3 align-items-center">
-          <Col md={3} className="text-end">
-            <Form.Label>Display Grade as</Form.Label>
-          </Col>
-          <Col md={9}>
-            <Form.Select id="wd-display-grade-as">
-              <option value="percentage">Percentage</option>
-            </Form.Select>
-          </Col>
-        </Row> */}
-
-        {/* <Row className="mb-3">
-          <Col md={3} className="text-end">
-            <Form.Label>Submission Type</Form.Label>
-          </Col>
-          <Col md={9}>
-            <Card>
-              <Card.Body>
-                <Form.Select id="wd-submission-type" className="mb-4">
-                  <option value="online">Online</option>
-                </Form.Select>
-
-                <Form.Label className="mb-2 fw-bold">Online Entry Options</Form.Label>
-                <Form.Check className="mb-2" id="wd-text-entry" type="checkbox" label="Text Entry" />
-                  <Form.Check
-                    id="wd-website-url"
-                    type="checkbox"
-                    label="Website URL"
-                    defaultChecked
-                  />
-                  <Form.Check className="mb-2" id="wd-media-recordings" type="checkbox" label="Media Recordings" />
-                  <Form.Check className="mb-2" id="wd-student-annotation" type="checkbox" label="Student Annotation" />
-                  <Form.Check className="mb-2" id="wd-file-upload" type="checkbox" label="File Uploads" />
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row> */}
-
         <Row className="mb-3">
           <Col md={3} className="text-end">
             <Form.Label>Assign</Form.Label>
@@ -104,31 +110,38 @@ export default function AssignmentEditor() {
           <Col md={9}>
             <Card>
               <Card.Body>
-                <Form.Label className="mb-2 fw-bold">Assign to</Form.Label>
-                {/* <Form.Control className="mb-4" id="wd-assign-to" type="text" defaultValue="Everyone" /> */}
-                <div className="form-control d-flex align-items-center">
-                  <span className="bg-light px-3 py-1 border rounded me-2">Everyone
-                    <span className="ms-4 text-muted" style={{ cursor: "pointer" }}>✕</span>
-                  </span>
-                </div>
-
                 <Form.Label className="mb-2 fw-bold">Due</Form.Label>
-                <Form.Control className="mb-4" id="wd-due-date" type="datetime-local" defaultValue={assignment.duetime} />
-
+                <Form.Control
+                  className="mb-4"
+                  id="wd-due-date"
+                  type="datetime-local"
+                  value={dueTime}
+                  onChange={(e) => setDueTime(e.target.value)}
+                />
                 <Row className="mb-2 align-items-center fw-bold">
-                  <Col md={6} >
+                  <Col md={6}>
                     <Form.Label>Available from</Form.Label>
                   </Col>
                   <Col md={6}>
-                  <Form.Label>Until</Form.Label>
+                    <Form.Label>Until</Form.Label>
                   </Col>
                 </Row>
                 <Row className="mb-2 align-items-center">
                   <Col md={6}>
-                    <Form.Control id="wd-available-from" type="datetime-local" defaultValue={assignment.availabletime} />
+                    <Form.Control
+                      id="wd-available-from"
+                      type="datetime-local"
+                      value={availableFrom}
+                      onChange={(e) => setAvailableFrom(e.target.value)}
+                    />
                   </Col>
                   <Col md={6}>
-                    <Form.Control id="wd-available-until" type="datetime-local" defaultValue={assignment.duetime} />
+                    <Form.Control
+                      id="wd-available-until"
+                      type="datetime-local"
+                      value={availableUntil}
+                      onChange={(e) => setAvailableUntil(e.target.value)}
+                    />
                   </Col>
                 </Row>
               </Card.Body>
@@ -137,14 +150,15 @@ export default function AssignmentEditor() {
         </Row>
         <hr />
         <div className="text-end">
-          <Link to={`/Kambaz/Courses/${cid}/Assignments`} className="btn btn-secondary me-2">
+          <Button variant="secondary" className="me-2" onClick={handleCancel}>
             Cancel
-          </Link>
-          <Link to={`/Kambaz/Courses/${cid}/Assignments`} className="btn btn-danger">
+          </Button>
+          <Button variant="danger" onClick={handleSave}>
             Save
-          </Link>
+          </Button>
         </div>
       </Form>
     </div>
   );
 }
+
