@@ -6,7 +6,10 @@ import { GoTriangleDown } from "react-icons/go";
 import { IoEllipsisVertical } from "react-icons/io5";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { deleteAssignment } from "./reducer";
+import { useEffect } from "react";
+import * as coursesClient from "../client";
+import * as assignmentsClient from "./client";
+import { setAssignments, deleteAssignment } from "./reducer";
 
 
 export default function Assignments(
@@ -18,6 +21,19 @@ export default function Assignments(
   const courseAssignments = assignments.filter((assignment: any) => assignment.course === cid); 
   const navigate = useNavigate()
   const dispatch = useDispatch();
+
+  const fetchAssignments = async () => {
+    const assignments = await coursesClient.findAssignmentsForCourse(cid as string);
+    dispatch(setAssignments(assignments));
+  };
+  useEffect(() => {
+    fetchAssignments();
+  }, []);
+
+  const removeAssignment = async (assignmentId: string) => {
+    await assignmentsClient.deleteAssignment(assignmentId);
+    dispatch(deleteAssignment(assignmentId));
+  };
 
   return (
     <div id="wd-assignments" className="container mt-4">
@@ -74,13 +90,13 @@ export default function Assignments(
             {currentUser && currentUser.role === "FACULTY" && (
             <FaTrash className="text-danger fs-4 ms-3"
             style={{ cursor: "pointer" }}
-            onClick={() => {
+            onClick={async () => {
               if (
                 window.confirm(
                   "Are you sure you want to delete this assignment?"
                 )
               ) {
-                dispatch(deleteAssignment(assignment._id));
+                removeAssignment(assignment._id);
               }
             }}/>
             )}

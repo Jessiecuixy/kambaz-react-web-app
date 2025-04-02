@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   currentUser: null,
+  profileLoaded: false,
 };
 const accountSlice = createSlice({
   name: "account",
@@ -8,6 +9,7 @@ const accountSlice = createSlice({
   reducers: {
     setCurrentUser: (state, action) => {
       state.currentUser = action.payload;
+      state.profileLoaded = true;
     },
   },
 });

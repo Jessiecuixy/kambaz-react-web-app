@@ -1,15 +1,29 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 // import { useSelector } from "react-redux";
 export default function AccountNavigation() {
   // const { currentUser } = useSelector((state: any) => state.accountReducer);
   // const links = currentUser ? ["Profile"] : ["Signin", "Signup"];
   return (
     <div id="wd-account-navigation" className="wd list-group fs-5 rounded-0">
-      <Link to={`/Kambaz/Account/Signin`} 
-        className="list-group-item active border border-0"> Signin  </Link>
-      <Link to={`/Kambaz/Account/Signup`}  
-        className="list-group-item text-danger border border-0"> Signup  </Link>
-      <Link to={`/Kambaz/Account/Profile`} 
-        className="list-group-item text-danger border border-0"> Profile </Link>
+      <NavLink to={`/Kambaz/Account/Signin`}
+        className={({ isActive }) =>
+          `list-group-item border border-0 ${isActive ? "active" : "text-danger"}`
+        }>
+        Signin
+      </NavLink>
+
+      <NavLink to={`/Kambaz/Account/Signup`}
+        className={({ isActive }) =>
+          `list-group-item border border-0 ${isActive ? "active" : "text-danger"}`
+        }>
+        Signup
+      </NavLink>
+
+      <NavLink to={`/Kambaz/Account/Profile`}
+        className={({ isActive }) =>
+          `list-group-item border border-0 ${isActive ? "active" : "text-danger"}`
+        }>
+        Profile
+      </NavLink>
     </div>
 );}

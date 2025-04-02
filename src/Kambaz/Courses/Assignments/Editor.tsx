@@ -4,6 +4,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { addAssignment, updateAssignment } from "./reducer";
 import { v4 as uuidv4 } from "uuid";
+import * as coursesClient from "../client";
+import * as assignmentsClient from "./client";
 
 export default function AssignmentEditor() {
   const { cid, aid } = useParams();
@@ -43,7 +45,7 @@ export default function AssignmentEditor() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleSave = () => {
+  const handleSave = async() => {
     // console.log("cid =", cid);
     const newAssignment = {
       _id: isEditMode ? foundAssignment!._id : uuidv4(),
@@ -57,9 +59,11 @@ export default function AssignmentEditor() {
     };
 
     if (isEditMode) {
+      await assignmentsClient.updateAssignment(newAssignment);
       dispatch(updateAssignment(newAssignment));
     } else {
-      dispatch(addAssignment(newAssignment));
+      const savedAssignment = await coursesClient.createAssignmentForCourse(cid!, newAssignment);
+      dispatch(addAssignment(savedAssignment));
     }
     navigate("/Kambaz/Courses/" + cid + "/Assignments");
   };
