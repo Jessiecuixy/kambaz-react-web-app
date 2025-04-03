@@ -11,17 +11,33 @@ import session from "express-session";
 import "dotenv/config";
 
 const app = express();
+// app.use(cors({
+//     credentials: true,
+//     origin: process.env.NETLIFY_URL || "http://localhost:5173" || "https://a5--kambaz-react-web-app-jessie.netlify.app",
+// })); 
 app.use(cors({
-    credentials: true,
-    origin: process.env.NETLIFY_URL || "http://localhost:5173" || "https://a5--kambaz-react-web-app-jessie.netlify.app",
-})); 
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      process.env.NETLIFY_URL,
+      "http://localhost:5173",
+      "https://a5--kambaz-react-web-app-jessie.netlify.app"
+    ];
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true  
+}));
+
 const sessionOptions = {
     secret: process.env.SESSION_SECRET || "kambaz",
     resave: false,
     saveUninitialized: true,
     cookie: {
-      secure: false,
-      sameSite: "lax",
+      secure: true,
+      sameSite: "none",
       httpOnly: true
     },
 
