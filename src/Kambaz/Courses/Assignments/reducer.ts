@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 // import * as db from "../../Database"; 
-import { v4 as uuidv4 } from "uuid";
+// import { v4 as uuidv4 } from "uuid";
 
-const initialState = {
+const initialState: { assignments: any[] } = {
   assignments: [],
 };
 
@@ -15,11 +15,12 @@ const assignmentsSlice = createSlice({
     },
 
     addAssignment: (state, { payload: assignment }) => {
-      const newAssignment: any = {
-        _id: uuidv4(),
-        ...assignment,
-      };
-      state.assignments = [...state.assignments, newAssignment] as any;
+      state.assignments.push(assignment);
+      // const newAssignment: any = {
+      //   _id: uuidv4(),
+      //   ...assignment,
+      // };
+      // state.assignments = [...state.assignments, newAssignment] as any;
     },
 
     updateAssignment: (state, { payload: assignment }) => {

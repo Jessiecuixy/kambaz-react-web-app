@@ -5,10 +5,11 @@ import Assignments from "./Assignments";
 import AssignmentEditor from "./Assignments/Editor";
 import { FaAlignJustify } from "react-icons/fa6";
 import { useSelector } from "react-redux";
+import EnrolledUsers from "./People/EnrolledUsers";
 // import { courses } from "../Database";
 
 import { Navigate, Route, Routes, useParams, useLocation } from "react-router";
-import PeopleTable from "./People/Table";
+// import PeopleTable from "./People/Table";
 
 export default function Courses() {
     const { cid } = useParams();
@@ -42,7 +43,7 @@ export default function Courses() {
               <Route path="Assignments" element={<Assignments />} />
               <Route path="Assignments/Editor" element={<AssignmentEditor />} /> 
               <Route path="Assignments/:aid" element={<AssignmentEditor />} />
-              <Route path="People" element={<PeopleTable />} />
+              <Route path="People" element={<EnrolledUsers />} />
             </Routes>
           </div>
         </div>

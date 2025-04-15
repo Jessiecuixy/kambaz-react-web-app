@@ -3,7 +3,7 @@ import { Form, Card, Row, Col, Button } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { addAssignment, updateAssignment } from "./reducer";
-import { v4 as uuidv4 } from "uuid";
+// import { v4 as uuidv4 } from "uuid";
 import * as coursesClient from "../client";
 import * as assignmentsClient from "./client";
 
@@ -48,7 +48,7 @@ export default function AssignmentEditor() {
   const handleSave = async() => {
     // console.log("cid =", cid);
     const newAssignment = {
-      _id: isEditMode ? foundAssignment!._id : uuidv4(),
+      // _id: isEditMode ? foundAssignment!._id : uuidv4(),
       course: cid,
       title,
       description,

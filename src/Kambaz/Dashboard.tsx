@@ -2,24 +2,28 @@ import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Button, Card, Col, FormControl, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import * as enrollmentsClient from "./Enrollments/client";
+import { useSelector } from "react-redux";
+// import * as enrollmentsClient from "./Enrollments/client";
 
 export default function Dashboard({
   courses,
   addNewCourse,
   updateExistingCourse,
   deleteExistingCourse,
+  enrolling, 
+  setEnrolling,
+  updateEnrollment, 
 }: {
   courses: any[];
   addNewCourse: (course: any) => void;
   updateExistingCourse: (course: any) => void;
   deleteExistingCourse: (courseId: string) => void;
   toggleEnroll: (userId: string, courseId: string, isEnrolled: boolean) => void;
+  enrolling: boolean; setEnrolling: (enrolling: boolean) => void;
+  updateEnrollment: (courseId: string, enrolled: boolean) => void;
 }) {
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const enrollments = useSelector((state: any) => state.enrollmentReducer.enrollments);
-  const dispatch = useDispatch();
 
   const [selectedCourse, setSelectedCourse] = useState({
     _id: uuidv4(),
@@ -28,33 +32,27 @@ export default function Dashboard({
     src: "/images/reactjs.jpg",
   });
 
-  const [showAllCourses, setShowAllCourses] = useState(false);
-
   const displayedCourses =
-    currentUser.role === "STUDENT"
-      ? showAllCourses
-        ? courses
-        : courses.filter((courseItem: any) =>
-            enrollments.some(
-              (enroll: any) =>
-                enroll.user === currentUser._id && enroll.course === courseItem._id
-            )
+  currentUser.role === "STUDENT"
+    ? enrolling
+      ? courses
+      : courses.filter((courseItem: any) =>
+          enrollments.some(
+            (enroll: any) =>
+              enroll.user === currentUser._id && enroll.course === courseItem._id
           )
-      : courses;
+        )
+    : courses;
 
   return (
     <div className="p-4" id="wd-dashboard">
-      <h1 id="wd-dashboard-title">Dashboard</h1> <hr />
-
+      <h1 id="wd-dashboard-title">Dashboard
       {currentUser && currentUser.role === "STUDENT" && (
-        <Button
-          variant="info"
-          className="float-end mb-3"
-          onClick={() => setShowAllCourses(!showAllCourses)}
-        >
-          {showAllCourses ? "Enrollments" : "All Courses"}
-        </Button>
-      )}
+
+      <button onClick={() => setEnrolling(!enrolling)} className="float-end btn btn-primary" >
+          {enrolling ? "My Courses" : "All Courses"}
+        </button>)}
+      </h1> <hr />
 
       {currentUser && currentUser.role === "FACULTY" && (
         <div>
@@ -117,12 +115,6 @@ export default function Dashboard({
       <div className="row" id="wd-dashboard-courses">
         <Row xs={1} md={5} className="g-4">
           {displayedCourses.map((courseItem: any) => {
-            const isEnrolled = enrollments.some(
-              (enroll: any) =>
-                enroll.user === currentUser._id &&
-                enroll.course === courseItem._id
-            );
-
             return (
               <Col
                 className="wd-dashboard-course"
@@ -180,24 +172,13 @@ export default function Dashboard({
 
                       {currentUser && currentUser.role === "STUDENT" && (
                         <Button
-                          variant={isEnrolled ? "danger" : "success"}
+                          variant={courseItem.enrolled ? "danger" : "success"}
                           onClick={async (event) => {
                             event.preventDefault();
-                            const enrollment = {
-                              user: currentUser._id,
-                              course: courseItem._id,
-                            };
-                            if (isEnrolled) {
-                              await enrollmentsClient.unenrollCourse(enrollment);
-                              dispatch({ type: "enrollments/unenrollCourse", payload: enrollment });
-                            } else {
-                              await enrollmentsClient.enrollCourse(enrollment);
-                              dispatch({ type: "enrollments/enrollCourse", payload: enrollment });
-                            }
-                        }}
+                            updateEnrollment(courseItem._id, !courseItem.enrolled);}}
                           className="float-end"
                         >
-                          {isEnrolled ? "Unenroll" : "Enroll"}
+                          {courseItem.enrolled ? "Unenroll" : "Enroll"}
                         </Button>
                       )}
                     </Card.Body>
