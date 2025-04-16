@@ -16,15 +16,15 @@ export default function Courses() {
     const courses = useSelector((state: any) => state.courseReducer.courses);
     const course = courses.find((course: any) => course._id === cid);
     const { pathname } = useLocation();
-    const enrollments = useSelector((state: any) => state.enrollmentReducer.enrollments);
-    const { currentUser } = useSelector((state: any) => state.accountReducer);
-    const isEnrolled = enrollments.some(
-      (enroll: any) => enroll.user === currentUser._id && enroll.course === cid
-  );
+    // const enrollments = useSelector((state: any) => state.enrollmentReducer.enrollments);
+    // const { currentUser } = useSelector((state: any) => state.accountReducer);
+  //   const isEnrolled = enrollments.some(
+  //     (enroll: any) => enroll.user === currentUser._id && enroll.course === cid
+  // );
 
-  if (currentUser && currentUser.role === "STUDENT" && !isEnrolled) {
-      return <Navigate to="/Kambaz/Dashboard" replace />;
-  }
+  // if (currentUser && currentUser.role === "STUDENT" && !isEnrolled) {
+  //     return <Navigate to="/Kambaz/Dashboard" replace />;
+  // }
     return (
       <div id="wd-courses">
         <h2 className="text-danger">

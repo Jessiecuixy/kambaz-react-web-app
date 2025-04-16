@@ -48,7 +48,7 @@ export default function AssignmentEditor() {
   const handleSave = async() => {
     // console.log("cid =", cid);
     const newAssignment = {
-      // _id: isEditMode ? foundAssignment!._id : uuidv4(),
+      _id: isEditMode ? foundAssignment!._id : null,
       course: cid,
       title,
       description,
