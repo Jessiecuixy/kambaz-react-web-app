@@ -6,85 +6,36 @@ import Courses from "./Courses";
 import "./styles.css";
 import Session from "./Account/Session";
 import ProtectedRoute from "./Account/ProtectedRoute";
-
-import * as userClient from "./Account/client";
 import * as courseClient from "./Courses/client";
 
 import { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { enrollCourse, unenrollCourse } from "./Enrollments/reducer";
+import { useSelector } from "react-redux";
 
 export default function Kambaz() {
   const [courses, setCourses] = useState<any[]>([]);
   const { currentUser } = useSelector((state: any) => state.accountReducer);
-  const [enrolling, setEnrolling] = useState<boolean>(false);
-  const findCoursesForUser = async () => {
+  
+  const fetchAllCourses = async () => {
     try {
-      const courses = await userClient.findCoursesForUser(currentUser._id);
-      setCourses(courses);
+      const allCourses = await courseClient.fetchCoursesForUser(currentUser._id);
+      setCourses(allCourses);
     } catch (error) {
-      console.error(error);
+      console.error("Failed to fetch courses", error);
     }
   };
-  const updateEnrollment = async (courseId: string, enrolled: boolean) => {
-    if (enrolled) {
-      await userClient.enrollIntoCourse(currentUser._id, courseId);
-    } else {
-      await userClient.unenrollFromCourse(currentUser._id, courseId);
-    }
-    setCourses(
-      courses.map((course) => {
-        if (course._id === courseId) {
-          return { ...course, enrolled: enrolled };
-        } else {
-          return course;
-        }
-      })
-    );
-  };
- 
-  const fetchCourses = async () => {
-    try {
-      const allCourses = await courseClient.fetchAllCourses();
-      const enrolledCourses = await userClient.findCoursesForUser(
-        currentUser._id
-      );
-      const courses = allCourses.map((course: any) => {
-        if (enrolledCourses.find((c: any) => c._id === course._id)) {
-          return { ...course, enrolled: true };
-        } else {
-          return course;
-        }
-      });
-      setCourses(courses);
-    } catch (error) {
-      console.error(error);
-    }
-  }; 
-
-  const dispatch = useDispatch();
-
-  // const fetchCourses = async () => {
-  //   try {
-  //     const courses = await courseClient.fetchAllCourses();
-  //     setCourses(courses);
-  //   } catch (error) {
-  //     console.error("Failed to fetch courses", error);
-  //   }
-  // };
 
   useEffect(() => {
-    if (enrolling) {
-      fetchCourses();
-    } else {
-      findCoursesForUser();
-    } 
-  }, [currentUser, enrolling]);
+    if (currentUser && currentUser._id) {
+      fetchAllCourses();
+    }
+  }, [currentUser]);
 
   const addNewCourse = async (course: any) => {
-    // const newCourse = await userClient.createCourse(course);
     const newCourse = await courseClient.createCourse(course);
-    setCourses([...courses, newCourse]);
+    setCourses([...courses, {
+      ...newCourse,
+      src: newCourse.src ?? "/images/reactjs.jpg"
+    }]);
   };
 
   const updateCourse = async (course: any) => {
@@ -97,18 +48,6 @@ export default function Kambaz() {
   const deleteCourse = async (courseId: string) => {
     await courseClient.deleteCourse(courseId);
     setCourses(courses.filter((c) => c._id !== courseId));
-  };
-
-  const handleToggleEnroll = (
-    userId: string,
-    courseId: string,
-    isEnrolled: boolean
-  ) => {
-    if (isEnrolled) {
-      dispatch(unenrollCourse({ user: userId, course: courseId }));
-    } else {
-      dispatch(enrollCourse({ user: userId, course: courseId }));
-    }
   };
 
   return (
@@ -128,8 +67,6 @@ export default function Kambaz() {
                     addNewCourse={addNewCourse}
                     updateExistingCourse={updateCourse}
                     deleteExistingCourse={deleteCourse}
-                    toggleEnroll={handleToggleEnroll}
-                    enrolling={enrolling} setEnrolling={setEnrolling} updateEnrollment={updateEnrollment}
                   />
                 </ProtectedRoute>
               }

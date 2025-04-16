@@ -35,6 +35,12 @@ export const fetchAllCourses = async () => {
   const { data } = await axiosWithCredentials.get(COURSES_API);
   return data;
 };
+
+export const fetchCoursesForUser = async (userId: string) => {
+  const { data } = await axiosWithCredentials.get(`${REMOTE_SERVER}/api/users/${userId}/courses`);
+  return data;
+};
+
 export const deleteCourse = async (id: string) => {
   const { data } = await axiosWithCredentials.delete(`${COURSES_API}/${id}`);
   return data;
