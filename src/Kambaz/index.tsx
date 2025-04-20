@@ -75,6 +75,7 @@ export default function Kambaz() {
     const newCourse = await courseClient.createCourse(course);
     setCourses([...courses, {
       ...newCourse,
+      enrolled: true,
       src: newCourse.src ?? "/images/reactjs.jpg"
     }]);
   };
